@@ -1,2 +1,1 @@
-models/api_key.json
-.venv
+app_backend/services/api_key.json
