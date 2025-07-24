@@ -1,5 +1,5 @@
 from flask import Flask , request , Response , jsonify
-from app.services.groq_LLM import llm_response
+from app_backend.services.groq_LLM import llm_response
 
 class Flask_app:
     def __init__(self):
@@ -7,10 +7,11 @@ class Flask_app:
         self.configure_routes()
 
     def configure_routes(self):
-        @self.app.route('/test', methods = ['GET'])
-        def method_name():
-            return "app is runnig"
-
+        @self.app.route('/', methods=['GET'])
+        def test():
+            link = 'xyz'
+            print("[INFO] /test route hit")
+            return f"App is running at: {link}"
 
         @self.app.route('/chat', methods = ['POST'])
         def chat_llm():
@@ -20,7 +21,7 @@ class Flask_app:
 
             if not user_query :
                 return jsonify({"error":"Missing 'user_query'"}), 400 
-            return Response(llm_response(user_query , context_data), mimetype="text/plain")           
-
-    def run(self, debug=True):
-        self.app.run(debug=debug)
+            return Response(llm_response(user_query , context_data), mimetype="text/plain")
+    
+    def get_app(self):
+        return self.app

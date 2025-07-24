@@ -1,6 +1,7 @@
 import os
 from groq import Groq
 
+
 def read_api_key(file_path):
     try:
         with open(file_path, 'r') as f:
@@ -8,11 +9,20 @@ def read_api_key(file_path):
     except FileNotFoundError:
         raise FileNotFoundError(f"API key file not found at: {file_path}")
 
+file_path = os.path.join(os.path.dirname(__file__), '..', 'services', 'api_key.json')
+file_path = os.path.abspath(file_path)
+api_key = read_api_key(file_path)
 
 def llm_response(user_query , context_data=None):
 
-    api_key = read_api_key('/workspace/ChatBot_Backend-RAG-/app/services/api_key.json')
+    file_path = os.path.join(os.path.dirname(__file__), '..', 'services', 'api_key.json')
+    file_path = os.path.abspath(file_path)
+    api_key = read_api_key(file_path)
     client = Groq(api_key=api_key)
+
+    print("[INFO] Sending request to Groq...")
+
+
     if context_data:
         system_content=("You are a helpful assistant. Use the following context strictly to answer the user's question. "
                 "If the answer is not found in the context, say you don't know.") 
@@ -22,8 +32,7 @@ def llm_response(user_query , context_data=None):
         user_content = user_query
 
     messages=[
-        {
-          "role": "system",
+        {"role": "system",
           "content": system_content
                 
         },
@@ -31,7 +40,7 @@ def llm_response(user_query , context_data=None):
           "role": "user",
           "content": user_content
         }
-      ],
+      ]
 
     completion = client.chat.completions.create(
       model="llama-3.3-70b-versatile",
@@ -42,7 +51,7 @@ def llm_response(user_query , context_data=None):
       stop=None,    #string that can cause model to stop  
       )
 
-    def response_generate():
+    def generate_response():
       for chunk in completion:
           response = chunk.choices[0].delta.content 
           if response:

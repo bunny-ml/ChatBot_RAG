@@ -1,11 +1,6 @@
-from flask import Flask 
-app = Flask(__name__)
+from app_backend.api.routes import Flask_app
 
-@app.route('/')
-def index():
-	return "Hello World"
-
-if __name__=='__main__':
-	app.run(debug=True)
-
-
+if __name__ == "__main__":
+    app_instance = Flask_app()
+    app = app_instance.get_app()
+    app.run(debug=True)
