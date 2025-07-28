@@ -145,6 +145,28 @@ input[type="file"] {
   color: white;
   font-size: 16px;
 }
-
-
-
+ /* Prevent scrollbar from affecting layout */
+html {
+    overflow-y: scroll; /* Ensures scrollbar space is always reserved */
+  }
+  
+  /* Custom green scrollbar */
+  ::-webkit-scrollbar {
+    width: 12px;
+  }
+  
+  ::-webkit-scrollbar-track {
+    background: #1e1e1e;
+    border-radius: 10px;
+  }
+  
+  ::-webkit-scrollbar-thumb {
+    /* background-color: #45a049; */
+    border-radius: 10px;
+    border: 3px solid #4caf50
+  }
+  
+  ::-webkit-scrollbar-thumb:hover {
+    background-color: #4caf50;
+  }
+  

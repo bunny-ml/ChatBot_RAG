@@ -76,15 +76,12 @@ particlesJS('particles-js', {
 });
 
 
-
 const chatInput = document.getElementById("messageInput");
 const sendChatBtn = document.getElementById("sendBTN");
 const chatbox = document.getElementById("chatbox");
+const fileInput = document.getElementById("fileUpload");
 
-let userMessage = "";
-
-
-// Create a message element
+// Create message element
 const createMessageDiv = (message, type = "incoming") => {
   const messageDiv = document.createElement("div");
   messageDiv.className = `chat-message ${type}`;
@@ -92,56 +89,64 @@ const createMessageDiv = (message, type = "incoming") => {
   return messageDiv;
 };
 
-// Fetch response
-const generateResponse = async (placeholderDiv) => {
+// Stream response from Flask backend
+const streamFlaskResponse = async (userMessage, placeholderDiv) => {
   try {
-    const response = await fetch(API_URL, {
+    const response = await fetch("/chat", {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${API_KEY}`
-      },
-      body: JSON.stringify({
-        model: "gpt-3.5-turbo",
-        messages: [{ role: "user", content: userMessage }]
-      })
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ user_query: userMessage })
     });
 
-    const data = await response.json();
-    const reply = data.choices?.[0]?.message?.content || "No response.";
-    placeholderDiv.querySelector("p").textContent = reply;
+    if (!response.ok) {
+      throw new Error("Failed to fetch response from backend.");
+    }
+
+    const reader = response.body.getReader();
+    const decoder = new TextDecoder("utf-8");
+    let fullResponse = "";
+
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+
+      const chunk = decoder.decode(value, { stream: true });
+      fullResponse += chunk;
+      placeholderDiv.querySelector("p").textContent = fullResponse;
+    }
   } catch (error) {
+    console.error("Chat fetch error:", error);
     placeholderDiv.querySelector("p").textContent = "⚠️ Error fetching response.";
-    placeholderDiv.querySelector("p").classList.add("error");
-    console.error("Fetch error:", error);
   } finally {
     chatbox.scrollTop = chatbox.scrollHeight;
   }
 };
 
-// Handle sending a message
+// Send message logic
 const handleChat = () => {
-  userMessage = chatInput.value.trim();
+  const userMessage = chatInput.value.trim();
   if (!userMessage) return;
 
-  // Display user message
-  const outgoingMsg = createMessageDiv(userMessage, "outgoing");
-  chatbox.appendChild(outgoingMsg);
-  chatInput.value = "";
-  chatbox.scrollTop = chatbox.scrollHeight;
+  // Show user message
+  const userDiv = createMessageDiv(userMessage, "outgoing");
+  chatbox.appendChild(userDiv);
 
-  // Add placeholder bot message
+  // Clear input
+  chatInput.value = "";
+  chatInput.focus();
+
+  // Add placeholder for bot reply
   const placeholder = createMessageDiv("Typing...", "incoming");
   chatbox.appendChild(placeholder);
   chatbox.scrollTop = chatbox.scrollHeight;
 
-  generateResponse(placeholder);
+  // Fetch response from backend
+  streamFlaskResponse(userMessage, placeholder);
 };
 
-// Send on button click
+// Event listeners
 sendChatBtn.addEventListener("click", handleChat);
 
-// Optional: Send on "Enter" press
 chatInput.addEventListener("keydown", (e) => {
   if (e.key === "Enter" && !e.shiftKey) {
     e.preventDefault();
@@ -149,20 +154,15 @@ chatInput.addEventListener("keydown", (e) => {
   }
 });
 
-
-const fileInput = document.getElementById("fileUpload");
-
-// Handle file selection
+// Optional: Handle file upload (if you have /upload implemented)
 fileInput.addEventListener("change", async () => {
   const file = fileInput.files[0];
   if (!file) return;
 
-  // Show file name as outgoing message
-  const fileMessage = createMessageDiv(`📎 Uploading "${file.name}"...`, "outgoing");
-  chatbox.appendChild(fileMessage);
+  const fileMsg = createMessageDiv(`📎 Uploading "${file.name}"...`, "outgoing");
+  chatbox.appendChild(fileMsg);
   chatbox.scrollTop = chatbox.scrollHeight;
 
-  // Create FormData to send to backend
   const formData = new FormData();
   formData.append("file", file);
 
@@ -182,6 +182,6 @@ fileInput.addEventListener("change", async () => {
     chatbox.appendChild(errorMsg);
   } finally {
     chatbox.scrollTop = chatbox.scrollHeight;
-    fileInput.value = ""; // Reset file input
+    fileInput.value = "";
   }
 });
