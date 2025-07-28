@@ -1,33 +1,40 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Smart ChatBot</title>
-  <link rel="stylesheet" href="/static/style.css" />
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet" />
+  <title>RAG ChatBot</title>
+  <link rel="icon" type="image/png" href="/icon/favicon.png" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="/static/style.css" />  
+  <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
 </head>
 <body>
+  
+  <!-- particles-js -->
+  <div id="particles-js"></div>
+
   <div class="chat-wrapper">
     <header class="chat-header">
-      <h1>💬 Smart ChatBot</h1>
+      <h1><i class="fas fa-robot"></i>RAG ChatBot</h1>
     </header>
-
     <main class="chat-main" id="chatbox">
       <div class="chat-message incoming">
         <p>Hello! How can I assist you today?</p>
       </div>
     </main>
-
-
 <footer class="chat-input-area">
-  <label for="fileUpload" class="file-upload-btn">📁</label>
+  <label for="fileUpload" class="file-upload-btn">
+    <i class="fas fa-paperclip"></i>
+  </label>
   <input type="file" id="fileUpload" hidden />
   <textarea id="messageInput" placeholder="Type your message..."></textarea>
-  <button id="sendBTN">Send</button>
+  <button id="sendBTN">
+    <i class="fas fa-paper-plane"></i> 
+  </button>
 </footer>
   </div>
-
   <script src="/static/script.js" defer></script>
 </body>
 </html>

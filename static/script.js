@@ -1,3 +1,82 @@
+/* Particle.js initialization */
+particlesJS('particles-js', {
+    "particles": {
+        "number": {
+            "value": 100,
+            "density": {
+                "enable": true,
+                "value_area": 800
+            }
+        },
+        "color": {
+            "value": "#77B254"
+        },
+        "shape": {
+            "type": "circle",
+            "stroke": {
+                "width": 0,
+                "color": "#77B254"
+            }
+        },
+        "opacity": {
+            "value": 1,
+            "random": true,
+            "anim": {
+                "enable": true,
+                "speed": 0,
+                "opacity_min": 0.1
+            }
+        },
+        "size": {
+            "value": 3,
+            "random": true,
+            "anim": {
+                "enable": true,
+                "speed": 100,
+                "size_min": 0.1
+            }
+        },
+        "line_linked": {
+            "enable": true,
+            "distance": 150,
+            "color": "#77B254",
+            "opacity": 0.4,
+            "width": 1
+        },
+        "move": {
+            "enable": true,
+            "speed": 3,
+            "direction": "none",
+            "random": true,
+            "straight": false,
+            "out_mode": "out",
+            "bounce": false,
+            "attract": {
+                "enable": false,
+                "rotateX": 600,
+                "rotateY": 1200
+            }
+        }
+    },
+    "interactivity": {
+        "detect_on": "window",
+        "events": {
+            "onhover": {
+                "enable": true,
+                "mode": "grab"
+            },
+            "onclick": {
+                "enable": true,
+                "mode": "push"
+            },
+            "resize": true
+        }
+    },
+    "retina_detect": true
+});
+
+
+
 const chatInput = document.getElementById("messageInput");
 const sendChatBtn = document.getElementById("sendBTN");
 const chatbox = document.getElementById("chatbox");
@@ -13,7 +92,7 @@ const createMessageDiv = (message, type = "incoming") => {
   return messageDiv;
 };
 
-// Fetch response from OpenAI
+// Fetch response
 const generateResponse = async (placeholderDiv) => {
   try {
     const response = await fetch(API_URL, {

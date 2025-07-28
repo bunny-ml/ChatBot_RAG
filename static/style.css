@@ -5,11 +5,20 @@
   box-sizing: border-box;
 }
 
-html, body {
+/* Particles Background */
+#particles-js {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+}
+
+body {
   height: 100%;
   font-family: 'Poppins', sans-serif;
-  background-color: #f5f7fa;
-  color: #333;
+  background-color: #121212;
 }
 
 /* Main Wrapper */
@@ -64,8 +73,8 @@ html, body {
 .chat-input-area {
   display: flex;
   padding: 16px;
-  border-top: 1px solid #ddd;
-  background-color: #ffffff;
+  border-top: 1px solid #121212;
+  background-color: #121212;
   position: sticky;
   bottom: 0;
   gap: 10px;
@@ -95,6 +104,8 @@ html, body {
 
 .chat-input-area button:hover {
   background-color: #246b39;
+  font-size: 18px;
+  color: #555;
 }
 
 /* Scrollbar Styling */
@@ -128,3 +139,12 @@ html, body {
 input[type="file"] {
   display: none;
 }
+
+
+#sendBTN i {
+  color: white;
+  font-size: 16px;
+}
+
+
+
