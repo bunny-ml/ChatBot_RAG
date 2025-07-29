@@ -61,6 +61,7 @@ body {
 .incoming {
   background-color: #e5e5e5;
   align-self: flex-start;
+  padding-left: 30px;
 }
 
 .outgoing {
