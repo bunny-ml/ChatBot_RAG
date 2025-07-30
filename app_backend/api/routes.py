@@ -1,12 +1,16 @@
 from flask_cors import CORS
+from werkzeug.utils import secure_filename
+import os
+# from sentence_transformers import SentenceTransformer
+# from langchain_community.vectorstores import Redis , Document
 from flask import Flask, request, Response, jsonify, render_template
 from app_backend.services.groq_LLM import llm_response
 
 class Flask_app:
     def __init__(self):
         self.app = Flask(__name__,
-                         static_folder='/home/bunny/Desktop/Coding/ChatBot_RAG/static',
-                         template_folder="/home/bunny/Desktop/Coding/ChatBot_RAG/templates")
+                         static_folder=os.path.abspath('static'),
+                         template_folder=os.path.abspath("templates"))
         CORS(self.app)
         self.configure_routes()
 
@@ -39,6 +43,30 @@ class Flask_app:
                 # print(f"[LLM full response] {full_response}")
 
             return Response(chat_generator(), mimetype="text/plain")
+
+
+        UPLOAD_FOLDER = 'uploads'
+        allowed_files= {'doc', 'docx', 'txt'}
+        os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+        @self.app.route('/upload', methods = ['POST'])
+        def upload_file():
+            print("/uploads")
+            file = request.files['file']
+            filename = secure_filename(file.filename)
+            filepath = os.path.join(UPLOAD_FOLDER, filename)
+            file.save(filepath)
+            for file in files:
+                if file and allowed_files(file.filename):
+                    file_content = file.read()
+
+            # with open(filepath , 'r' , encoding='utf-8') as f:
+            #     text = f.read()
+            # embedding = model.encode(text)
+
+            # doc = Document(page_content = text, metadata={'filename': filename})
+            # vector_store.add_documents([doc])
+            return ''
+            
 
     def get_app(self):
         return self.app
