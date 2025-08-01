@@ -2,19 +2,19 @@ import os
 import json
 from groq import Groq
 
-# def read_api_key(file_path):
-#     try:
-#         with open(file_path, "r") as f:
-#             data = json.load(f)
-#             # Adjust the key name here if different
-#             return data.get("API_KEY") or data.get("api_key") or ""
-#     except FileNotFoundError:
-#         raise FileNotFoundError(f"API key file not found at: {file_path}")
-#     except json.JSONDecodeError:
-#         raise ValueError(f"API key file at {file_path} is not a valid JSON")
+def read_api_key(file_path):
+    try:
+        with open(file_path, "r") as f:
+            data = json.load(f)
+            # Adjust the key name here if different
+            return data.get("API_KEY") or data.get("api_key") or ""
+    except FileNotFoundError:
+        raise FileNotFoundError(f"API key file not found at: {file_path}")
+    except json.JSONDecodeError:
+        raise ValueError(f"API key file at {file_path} is not a valid JSON")
 
-# file_path = os.path.join(os.path.dirname(__file__), "api_key.json")
-# file_path = os.path.abspath(file_path)
+file_path = os.path.join(os.path.dirname(__file__), "api_key.json")
+file_path = os.path.abspath(file_path)
 # print(f"Path to key: {file_path}")
 
 api_key = read_api_key(file_path)

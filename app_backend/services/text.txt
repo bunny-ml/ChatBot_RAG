@@ -1,0 +1,4 @@
+fastAPI
+billing mangement
+
+celery and redis

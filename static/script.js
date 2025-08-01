@@ -80,8 +80,6 @@ const sendChatBtn = document.getElementById("sendBTN");
 const chatbox = document.getElementById("chatbox");
 const fileInput = document.getElementById("fileUpload");
 
-
-
 // Create a chat message div with Markdown rendered and syntax highlighted
 const createMessageDiv = (markdown, type = "incoming") => {
   const messageDiv = document.createElement("div");
