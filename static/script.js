@@ -169,7 +169,7 @@ chatInput.addEventListener("keydown", (e) => {
   }
 });
 
-// Optional: Handle file upload
+// Handle file upload
 fileInput.addEventListener("change", async () => {
   const file = fileInput.files[0];
   if (!file) return;
@@ -188,6 +188,9 @@ fileInput.addEventListener("change", async () => {
     });
 
     const data = await response.json();
+    if (!response.ok) {
+      throw new Error(data.error || "File upload failed.");
+    } 
     const confirmation = data?.message || "File uploaded successfully.";
     const botResponse = createMessageDiv(confirmation, "incoming");
     chatbox.appendChild(botResponse);

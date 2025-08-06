@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Login Page</title>
+
+  <style>
+
+  </style>
+</head>
+<body>
+
+  <!-- Trigger Button -->
+  <button class="open-login-btn" onclick="document.getElementById('loginModal').style.display='block'">
+    Login
+  </button>
+
+  <!-- Modal -->
+  <div id="loginModal" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="document.getElementById('loginModal').style.display='none'">&times;</span>
+
+      <div class="imgcontainer">
+        <img src="img_avatar2.png" alt="Avatar" />
+      </div>
+
+      <form class="container" onsubmit="return loginUser(event)">
+        <label for="username"><b>Username</b></label>
+        <input type="text" placeholder="Enter Username" name="username" required />
+
+        <label for="password"><b>Password</b></label>
+        <input type="password" placeholder="Enter Password" name="password" required />
+
+        <button type="submit" class="login-btn">Login</button>
+        <button type="button" class="cancelbtn" onclick="document.getElementById('loginModal').style.display='none'">Cancel</button>
+
+        <span class="psw">Forgot <a href="#">password?</a></span>
+      </form>
+    </div>
+  </div>
+
+  <!-- Script -->
+  <script>
+    // Close modal if clicked outside
+    window.onclick = function (event) {
+      const modal = document.getElementById('loginModal');
+      if (event.target === modal) {
+        modal.style.display = "none";
+      }
+    }
+
+    // Fake login function (for demo only)
+    function loginUser(event) {
+      event.preventDefault();
+
+      const username = document.getElementsByName("username")[0].value;
+      const password = document.getElementsByName("password")[0].value;
+
+      // Dummy validation
+      if (username === "admin" && password === "1234") {
+        alert("Login successful!");
+        document.getElementById('loginModal').style.display = 'none';
+      } else {
+        alert("Invalid username or password.");
+      }
+
+      return false;
+    }
+  </script>
+</body>
+</html>

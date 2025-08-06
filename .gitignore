@@ -1,2 +1,5 @@
 app_backend/services/api_key.json
 .venv
+.gitpod.yml
+__pycache__/
+.github
