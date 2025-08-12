@@ -2,71 +2,81 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Login Page</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Login</title>
+  <!-- <script> -->
+  // const SUPABASE_URL = "{{ SUPABASE_URL }}";
+  // const SUPABASE_KEY = "{{ SUPABASE_KEY }}";
+<!-- </script> -->
 
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+  <script src="{{ url_for('static', filename='script.js') }}" defer></script>
   <style>
+    * {
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
 
+    body {
+      background: linear-gradient(to right, #0e1b12, #38f9d7);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    form {
+      background-color: white;
+      padding: 2rem;
+      border-radius: 10px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+      width: 100%;
+      max-width: 400px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 1.5rem;
+      color: #333;
+    }
+
+    input {
+      padding: 0.75rem;
+      margin-bottom: 1rem;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      font-size: 1rem;
+    }
+
+    button {
+      padding: 0.75rem;
+      background-color: #43e97b;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #2fddaa;
+    }
   </style>
 </head>
 <body>
 
-  <!-- Trigger Button -->
-  <button class="open-login-btn" onclick="document.getElementById('loginModal').style.display='block'">
-    Login
-  </button>
+  <form onsubmit="event.preventDefault(); handleLogin()">
+    <h2>Login</h2>
+    <input type="email" id="login_email" placeholder="Email" required />
+    <input type="password" id="login_password" placeholder="Password" required />
+    <button type="submit">Login</button>
+    <div id="loadingMsg" style="color: blue;"></div>
+  <div id="errorMsg" style="color: red;"></div>
+  </form>
 
-  <!-- Modal -->
-  <div id="loginModal" class="modal">
-    <div class="modal-content">
-      <span class="close" onclick="document.getElementById('loginModal').style.display='none'">&times;</span>
-
-      <div class="imgcontainer">
-        <img src="img_avatar2.png" alt="Avatar" />
-      </div>
-
-      <form class="container" onsubmit="return loginUser(event)">
-        <label for="username"><b>Username</b></label>
-        <input type="text" placeholder="Enter Username" name="username" required />
-
-        <label for="password"><b>Password</b></label>
-        <input type="password" placeholder="Enter Password" name="password" required />
-
-        <button type="submit" class="login-btn">Login</button>
-        <button type="button" class="cancelbtn" onclick="document.getElementById('loginModal').style.display='none'">Cancel</button>
-
-        <span class="psw">Forgot <a href="#">password?</a></span>
-      </form>
-    </div>
-  </div>
-
-  <!-- Script -->
-  <script>
-    // Close modal if clicked outside
-    window.onclick = function (event) {
-      const modal = document.getElementById('loginModal');
-      if (event.target === modal) {
-        modal.style.display = "none";
-      }
-    }
-
-    // Fake login function (for demo only)
-    function loginUser(event) {
-      event.preventDefault();
-
-      const username = document.getElementsByName("username")[0].value;
-      const password = document.getElementsByName("password")[0].value;
-
-      // Dummy validation
-      if (username === "admin" && password === "1234") {
-        alert("Login successful!");
-        document.getElementById('loginModal').style.display = 'none';
-      } else {
-        alert("Invalid username or password.");
-      }
-
-      return false;
-    }
-  </script>
 </body>
 </html>

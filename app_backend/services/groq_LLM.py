@@ -1,57 +1,86 @@
 import os
 import json
 from groq import Groq
+import redis
+
+
+redis_url = os.getenv("REDIS_URL")
+groq_key = os.getenv("GROQ_KEY")
+
+
+REDIS_URL = os.environ.get("REDIS_URL", redis_url)
+redis_client = redis.from_url(REDIS_URL)
 
 
 
 """temp fuction to read the api key from a json file"""
 
-def read_api_key(file_path):
-    try:
-        with open(file_path, "r") as f:
-            data = json.load(f)
-            # Adjust the key name here if different
-            return data.get("GROQ_KEY")
-    except FileNotFoundError:
-        raise FileNotFoundError(f"API key file not found at: {file_path}")
-    except json.JSONDecodeError:
-        raise ValueError(f"API key file at {file_path} is not a valid JSON")
+# def read_api_key(file_path):
+#     try:
+#         with open(file_path, "r") as f:
+#             data = json.load(f)
+#             # Adjust the key name here if different
+#             return data.get("GROQ_KEY")
+#     except FileNotFoundError:
+#         raise FileNotFoundError(f"API key file not found at: {file_path}")
+#     except json.JSONDecodeError:
+#         raise ValueError(f"API key file at {file_path} is not a valid JSON")
 
-file_path = os.path.join(os.path.dirname(__file__), "api_key.json")
-file_path = os.path.abspath(file_path)
-# print(f"Path to key: {file_path}")
+# file_path = os.path.join(os.path.dirname(__file__), "api_keys.json")
+# file_path = os.path.abspath(file_path)
+# # print(f"Path to key: {file_path}")
 
-api_key = read_api_key(file_path)
-if not api_key:
-    raise ValueError("API key is missing or empty. Check your file content.")
+# api_key = read_api_key(file_path)
+# if not api_key:
+#     raise ValueError("API key is missing or empty. Check your file content.")
 
 
 """the above function should be commented before deployment"""
 
-client = Groq(api_key=api_key)
+client = Groq(api_key=groq_key)
+
+MAX_HISTORY = 10
 
 
-def llm_response(user_query , context_data=None):
-  
-    # print("[INFO] Sending request to Groq...")
-
+def llm_response(user_id , user_query , context_data=None):
+    
+    history_key = f"chat_history:{user_id}"
+    
+    # Retrieve the conversation history from Redis
+    raw_history = redis_client.lrange(history_key, 0, -1)
+    chat_history = "\n".join(msg.decode("utf-8") for msg in reversed(raw_history)) if raw_history else ""
 
     if context_data:
-        system_content=("You are a helpful assistant named Peter. "
-                        "Answer based ONLY on the provided context. "
-                        "If the answer is not contained within the context, respond with: 'I don't know.' "
-                        "Do not use any outside information beyond the context.") 
-        user_content = f"Context:\n{context_data}\n\nUser Question:\n{user_query}"
+        system_content=("""You are Peter, a helpful assistant.  
+                            Hold a friendly, continuous conversation as if you naturally remember what was said earlier.  
+                            Base every response strictly on the provided context — do not use any outside information.  
+                            If the answer is not in the context, respond with: "I don't know."  
+                            Introduce yourself only in your very first message, and do not greet repeatedly or comment on the flow of the conversation.  
+                            Respond in a concise, natural, and human-like way while strictly staying within the given context.
+                            """
+                            ) 
+        user_content = (f"Previous chats:\n{chat_history}\n\n" +
+                        f"Context:\n{context_data}\n\n" + 
+                        f"User Question:\n{user_query}"
+                        )
 
     else:
-        system_content =( "You are a helpful assistant and your name is Peter."
-                         " Answer the user's question as best as you can.")
-        user_content = f"User Question:\n{user_query}"
+        system_content =("""You are Peter, a helpful assistant. 
+                            always consider what is in the previous cahts and answer according to the convesation tone.
+                            Maintain a seamless, natural conversation without acknowledging breaks or previous sessions.  
+                            Never reintroduce yourself, greet the user again, or recap what has already been said unless explicitly asked.  
+                            Base all answers on the provided chat history if it is not in history use exteral sources. 
+                            Keep replies concise, friendly, and human-like, but never include meta-comments about remembering past chats or the user returning.
+                            """
+                            )
+        user_content = (f"Previous chats:\n{chat_history} \n\n" 
+                        f"User Question:\n{user_query}"
+                        )
+
 
     messages=[
         {"role": "system",
           "content": system_content
-                
         },
         {
           "role": "user",
@@ -68,7 +97,12 @@ def llm_response(user_query , context_data=None):
           stream=False,   #used to send data in small chunks
           stop=None,    #string that can cause model to stop  
           )
-        response = completion.choices[0].message.content        
+        response = completion.choices[0].message.content  
+
+
+        # Store this query & response in Redis (as a single entry)
+        redis_client.lpush(history_key, f"User: {user_query}\nBot: {response}")
+        redis_client.ltrim(history_key, 0, MAX_HISTORY - 1)     
         return response
 
     except Exception as e:

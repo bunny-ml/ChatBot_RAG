@@ -1,5 +1,6 @@
-app_backend/services/api_key.json
+app_backend/services/api_keys.json
 .venv
 .gitpod.yml
 __pycache__/
 .github
+node_modules
