@@ -1,4 +1,5 @@
 from app_backend.api.routes import Flask_app
+import os
 
 if __name__ == "__main__":
     app_instance = Flask_app()
