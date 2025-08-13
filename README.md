@@ -81,7 +81,7 @@ A powerful **Retrieval-Augmented Generation (RAG)** chatbot that leverages large
 - **Register/Login:** Create an account using Gmail or login with existing credentials.  
 - **Upload File:** Upload PDF, DOCX, or TXT files.  
 - **Ask Questions:** Chat with the bot about your uploaded documents.  
-- **Memory:** Previous interactions are remembered through Redis for context-aware responses (up to 10 interactions).  
+- **Memory:** Previous interactions are remembered through Redis for context-aware responses (up to 20 interactions).  
 - **Automatic Cleanup:** Uploaded files are deleted once embeddings are stored.  
 
 ---
