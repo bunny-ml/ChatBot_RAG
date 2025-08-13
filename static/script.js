@@ -33,8 +33,10 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  
-
+  // Detect if running locally or on production
+const BASE_URL = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1"
+    ? "http://127.0.0.1:5000"
+    : window.location.origin;
 
   const MAX_HISTORY = 10; // 🛠 Change this to how many past messages you want to keep
   const HISTORY_KEY = "chat_history";
@@ -182,7 +184,6 @@ const streamFlaskResponse = async (userMessage, placeholderDiv) => {
 
 
   // 🟢 7. Supabase Auth
-  const SUPABASE_URL = 'https://imbauktwnwsqbyfdpsrq.supabase.co';
   const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
   // 🔐 Register
@@ -232,7 +233,7 @@ window.handleLogin = async function() {
 
     // Await the response from your /set-session endpoint
     // This is the key step to ensure the cookie is set.
-    const response = await fetch("http://127.0.0.1:5000/set-session", {
+    const response = await fetch(`${BASE_URL}/set-session`, {
       method: "POST",
       credentials: "include",
       headers: { "Content-Type": "application/json" },
@@ -248,22 +249,25 @@ window.handleLogin = async function() {
         // Now it's safe to redirect, as the browser has received and stored the cookie.
         // window.location.href = "http://127.0.0.1:5000/api/profile";
         loadingDiv.textContent= 'Session set! Redirecting...';
-        window.location.href = "http://127.0.0.1:5000/redirecting";
+        window.location.href = `redirecting`;
     } else {
         loadingDiv.textContent = "";
         errorDiv.textContent = "❌ Failed to set session cookies.";
     }
 };
 
-  //  Logout
+// logout
+
+
   window.logoutUser = async function() {
-    await sb.auth.signOut();
+    try {
+      const { error } = await sb.auth.signOut();
+      if (error) console.error("Logout error:", error);
+      window.location.href = "/login";
+    } catch (err) {
+      console.error("Unexpected error:", err);
+      window.location.href = "/login";
+    }
+  }
 
-    await fetch("http://127.0.0.1:5000/logout", {
-      method: "POST",
-      credentials: "include"
-    });
-
-    window.location.href = "http://127.0.0.1:5000/login";
-  };
 });

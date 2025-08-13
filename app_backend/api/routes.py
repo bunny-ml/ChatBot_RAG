@@ -24,14 +24,19 @@ class Flask_app:
         def home():
             """ print('[INFO] / route hit')"""
             try:
-                return render_template('login.html')
+               
+                return render_template('login.html',  
+                                       SUPABASE_URL = os.getenv('SUPABASE_URL'),
+                                       ANON_KEY = os.getenv('ANON_KEY'))
             except:
                 return jsonify({f"error":"there is an internal server error 500"}), 500
             
         @self.app.route('/chat_ai', methods=['GET'])
         def chat():
             try:
-                return render_template('index.html')
+                return render_template('index.html',
+                                                    SUPABASE_URL = os.getenv('SUPABASE_URL'),
+                                                    ANON_KEY = os.getenv('ANON_KEY'))
             except:
                 return jsonify({'error'"something whent wrong"}), 500
 
@@ -58,36 +63,14 @@ class Flask_app:
         def redirecting():
             return render_template('redirecting.html')
 
-        # protected route - read token from cookies
-        @self.app.route('/api/profile', methods=['GET'])
-        def profile():
-            token = request.cookies.get("access_token")
-            # print(f"Received token: {token}")
-            if not token:
-                return jsonify({"error": "Not logged in"}), 401
-            
-            try:
-                token_bytes = token.encode('utf-8')
-                secret_bytes = self.SUPABASE_JWT_SECRET.encode('utf-8')
-
-                # decoded = jwt.decode(token_bytes , secret_bytes ,algorithms=["HS256"])
-                decoded = jwt.decode(token_bytes, secret_bytes, audience="authenticated", algorithms=["HS256"])
-                email = decoded.get("email", "Unknown")
-                return jsonify({"message": f"Hello, {email}"})
-            except jwt.ExpiredSignatureError:
-                return jsonify({"error": "Token expired"}), 403
-            except jwt.InvalidTokenError as e:
-                print(f"JWT InvalidTokenError: {e}")
-                return jsonify({"error": "Invalid token"}), 403
-            
-
         @self.app.route('/logout', methods=["POST"])
         def logout():
-            
-            resp = make_response(jsonify({"message": "Logged out"}))
-            resp.delete_cookie("access_token")
-            resp.delete_cookie("refresh_token")
-            return resp
+        
+            SUPABASE_URL = os.getenv('SUPABASE_URL')
+            ANON_KEY = os.getenv('ANON_KEY')
+            return SUPABASE_URL, ANON_KEY
+
+
         
             
 
@@ -97,7 +80,9 @@ class Flask_app:
         def login():
             """ print('[INFO] /index route hit')"""
             try:
-                return render_template('login.html')
+                return render_template('login.html',
+                                       SUPABASE_URL = os.getenv('SUPABASE_URL'),
+                                       ANON_KEY = os.getenv('ANON_KEY'))
             except:
                 return jsonify({"error":"there is an internel server error check again later :)"}), 500
 
@@ -106,7 +91,9 @@ class Flask_app:
         def register():
             """ print('[INFO] /register route hit')"""
             try:
-                return render_template('register.html')
+                return render_template('register.html',
+                                       SUPABASE_URL = os.getenv('SUPABASE_URL'),
+                                       ANON_KEY = os.getenv('ANON_KEY'))
             except:
                 return jsonify({"error":"there is an error check again later :)"}), 500
 
@@ -124,13 +111,15 @@ class Flask_app:
                 secret_bytes = self.SUPABASE_JWT_SECRET.encode('utf-8')
 
                 decoded = jwt.decode(token_bytes, secret_bytes, audience="authenticated", algorithms=["HS256"])
-                email = decoded.get("email", "Unknown")
+                # email = decoded.get("email", "Unknown")
                 user_id = decoded.get('sub')
                 
                 data = request.get_json()
 
+
                 user_query = data.get('user_query')
-                context_data = data.get('context_data', None)
+                context_chunks = self.file_handle.retrieve_relevant_chunks(user_query,user_id, top_k=5)
+                context_data = "\n".join(context_chunks)
                     
 
                 return Response(llm_response(user_id , user_query, context_data), mimetype="text/plain")
@@ -148,27 +137,6 @@ class Flask_app:
         def upload():
             return self.file_handle.upload_with_auto_delete()
 
-
-         # use file storage system to upload files (google drive, s3, etc.)
-        # @self.app.route('/upload' , methods=['POST'])
-        # def upload():
-        #     if 'file' not in request.files:
-        #         return jsonify({"error": "No file part"}), 400
-            
-        #     file = request.files['file']
-        #     if file.filename == '':
-        #         return jsonify({"error": "No selected file"}), 400
-            
-        #     uploads = os.path.abspath('uploads')
-        #     os.makedirs(uploads, exist_ok=True)
-            
-        #     file_path = os.path.join(uploads, file.filename)
-        #     try:
-        #         file.save(file_path)
-        #         return jsonify({'message': "File uploaded successfully"}), 200
-        #     except Exception as e:
-        #         print("error:" f"File upload failed: {str(e)}"), 500
-        #     return jsonify({"error:" f"File upload failed: {str(e)}"}), 500
 
     def get_app(self):
         return self.app

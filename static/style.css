@@ -24,18 +24,55 @@ body {
 /* Main Wrapper */
 .chat-wrapper {
   display: flex;
+  position: sticky;
   flex-direction: column;
   height: 100vh;
 }
 
 /* Header */
 .chat-header {
-  background-color: #2F8D46;
-  padding: 16px;
-  text-align: center;
+  display: flex;
+  align-items: center;
+  /* position: fixed; */
+  position: sticky;
+  padding: 10px;
+  background-color: #f5f5f5;
+}
+
+.logout_button {
+  background-color: #28a745; /* Green */
   color: white;
-  font-size: 1.5rem;
-  font-weight: 600;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 5px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.logout_button:hover {
+  background-color: #218838; /* Darker green on hover */
+}
+
+.login_button {
+  background-color: #007bff; /* Blue */
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 5px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.login_button:hover {
+  background-color: #0069d9;
+}
+.chat-header h1 {
+  flex: 1;
+  text-align: center;
+  margin: 0;
+  font-size: 20px;
 }
 
 /* Chat Area */
