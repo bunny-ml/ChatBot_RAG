@@ -40,7 +40,8 @@
     <header class="chat-header">
     <button class="logout_button" onclick="logoutUser()">LogOut</button>
     <h1><i class="fas fa-robot"></i> RAG ChatBot</h1>
-    <button class="login_button" onclick="window.location.href='/login'">Login</button>
+<button class="login_button" onclick="window.location.href='{{ url_for('login') }}'">Login</button>
+
     </header>
     <main class="chat-main" id="chatbox">
       <div class="chat-message incoming">
