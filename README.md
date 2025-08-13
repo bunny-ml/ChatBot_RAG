@@ -12,14 +12,14 @@ A powerful **Retrieval-Augmented Generation (RAG)** chatbot that leverages large
 - **File Storage:** Files uploaded by users are temporarily stored in **Supabase Buckets** (50 MB free storage). Files are automatically deleted after conversion into vectors.  
 - **Vector Database:** Stores vector embeddings in **pgvector** on Supabase for fast retrieval.  
 - **Large File Handling:** Supports file chunking to manage and process large documents efficiently.  
-- **Chatbot Memory:** Uses **Redis** to maintain chatbot memory across sessions.  
+- **Chatbot Memory:** Uses **Redis** to maintain chatbot memory across sessions (up to 10 previous interactions).  
 - **Supported File Types:** Only allows uploads of **PDF, DOCX, and TXT** files.  
 
 ---
 
 ## Architecture Overview
 
-1. **User Interaction:** Users login/register and upload supported documents.
+1. **User Interaction:** Users register/login and upload supported documents.
 2. **File Handling:** Uploaded files are stored temporarily in Supabase Buckets.
 3. **Chunking:** Large files are split into manageable chunks for embedding.
 4. **Embedding:** Jina AI generates vector embeddings for each document chunk.
@@ -33,12 +33,12 @@ A powerful **Retrieval-Augmented Generation (RAG)** chatbot that leverages large
 ## Tech Stack
 
 | Component          | Technology / Service                   |
-|-------------------|-----------------------------------------|
-| LLM API            | GROQ (`llama-3.3-70b-versatile`)       |
-| Embeddings         | Jina.ai(https://jina.ai/)                                |
-| Authentication     | Supabase (JWT-based)                   |
+|-------------------|---------------------------------------|
+| LLM API            | GROQ (`llama-3.3-70b-versatile`)     |
+| Embeddings         | [Jina.ai](https://jina.ai/)           |
+| Authentication     | Supabase (JWT-based)                  |
 | File Storage       | Supabase Buckets                       |
-| Vector DB          | Supabase pgvector                      |
+| Vector DB          | Supabase pgvector                     |
 | Memory / Cache     | Redis                                  |
 | Deployment         | Render                                 |
 | Supported Files    | PDF, DOCX, TXT                         |
@@ -61,12 +61,12 @@ A powerful **Retrieval-Augmented Generation (RAG)** chatbot that leverages large
 3. Configure environment variables:
     ```
     SUPABASE_URL=your_supabase_url
-    SUPABASE_KEY=your_supabase_anon_or_service_key
+    SUPABASE_KEY=your_supabase_service_key
     JWT_SECRET=your_secret
-    ANON_KEY=supabase_anon_key
+    ANON_KEY=your_supabase_anon_key
     GROQ_API_KEY=your_groq_api_key
     REDIS_URL=your_redis_url
-    JINA_API_KEY=jina.ai_api_key
+    JINA_API_KEY=your_jina_api_key
     ```
 
 4. Run the application:
@@ -78,11 +78,11 @@ A powerful **Retrieval-Augmented Generation (RAG)** chatbot that leverages large
 
 ## Usage
 
-- **Register/Login:** Create an account with gmail or login with existing credentials.
-- **Upload File:** Upload PDF, DOCX, or TXT files.
-- **Ask Questions:** Chat with the bot about your uploaded documents.
-- **Memory:** Previous interactions are remembered through Redis for context-aware responses.
-- **Automatic Cleanup:** Uploaded files are deleted once embeddings are stored.
+- **Register/Login:** Create an account using Gmail or login with existing credentials.  
+- **Upload File:** Upload PDF, DOCX, or TXT files.  
+- **Ask Questions:** Chat with the bot about your uploaded documents.  
+- **Memory:** Previous interactions are remembered through Redis for context-aware responses (up to 10 interactions).  
+- **Automatic Cleanup:** Uploaded files are deleted once embeddings are stored.  
 
 ---
 
@@ -90,14 +90,17 @@ A powerful **Retrieval-Augmented Generation (RAG)** chatbot that leverages large
 
 - Only supports **PDF, DOCX, and TXT** files.  
 - Supabase Buckets have a **50 MB free storage limit**, so large file uploads may need careful management.  
-- Requires internet connection for LLM queries and cloud services.
-- There is no password reset option. 
-- There is also change password option and no profile page.
+- Requires internet connection for LLM queries and cloud services.  
+- Password reset option is not available.  
+- Change password functionality exists but there is no user profile page.  
+
 ---
 
 ## Deployment
 
-The project is deployed on **Render**, providing an accessible online chatbot interface.
+The project is deployed on **Render**, providing an accessible online chatbot interface.  
+
+**Live Demo:** [https://chatbot-rag-nwk5.onrender.com/](https://chatbot-rag-nwk5.onrender.com/)
 
 ---
 
@@ -109,4 +112,6 @@ Contributions are welcome! Please fork the repository and submit a pull request 
 
 ## Contact
 
-For questions or support, contact: [Gmail: abhishek.chaudhary.ml@gmail.com or on Github: https://github.com/bunny-ml]
+For questions or support:  
+- Gmail: abhishek.chaudhary.ml@gmail.com  
+- GitHub: [https://github.com/bunny-ml](https://github.com/bunny-ml)
