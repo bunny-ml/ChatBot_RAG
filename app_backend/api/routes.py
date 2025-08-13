@@ -53,15 +53,17 @@ class Flask_app:
 
             resp = make_response(redirect(url_for('redirecting')))
             # access token
-            resp.set_cookie("access_token", access_token, httponly=True, secure = False , samesite="Lax" , max_age=3600)
+            resp.set_cookie("access_token", access_token, httponly=True, secure = True , samesite="Lax" , max_age=3600)
             # refresh token 
-            resp.set_cookie("refresh_token", refresh_token , httponly=True , secure=False ,samesite="Lax", max_age=604800 )
+            resp.set_cookie("refresh_token", refresh_token , httponly=True , secure=True ,samesite="Lax", max_age=604800 )
             return resp
         
         # Add a new route for the temporary redirecting page
         @self.app.route('/redirecting', methods=['GET'])
         def redirecting():
             return render_template('redirecting.html')
+        
+    
 
         @self.app.route('/logout', methods=["POST"])
         def logout():
