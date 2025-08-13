@@ -13,7 +13,7 @@ redis_client = redis.from_url(REDIS_URL)
 
 client = Groq(api_key=groq_key)
 
-MAX_HISTORY = 10
+MAX_HISTORY = 20
 
 
 def llm_response(user_id , user_query , context_data=None):
