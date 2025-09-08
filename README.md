@@ -79,7 +79,7 @@ A powerful **Retrieval-Augmented Generation (RAG)** chatbot that leverages large
 ## Usage
 
 - **Register/Login:** Create an account using Gmail or login with existing credentials.  
-- **Upload File:** Upload PDF, DOCX, or TXT files.  
+- **Upload File:** Upload '.txt', '.pdf', '.docx', '.doc', '.pptx', '.csv', '.xlsx' and '.md' files.  
 - **Ask Questions:** Chat with the bot about your uploaded documents.  
 - **Memory:** Previous interactions are remembered through Redis for context-aware responses (up to 20 interactions).  
 - **Automatic Cleanup:** Uploaded files are deleted once embeddings are stored.  
@@ -88,11 +88,11 @@ A powerful **Retrieval-Augmented Generation (RAG)** chatbot that leverages large
 
 ## Limitations
 
-- Only supports **PDF, DOCX, and TXT** files.  
+- Only supports **'.txt', '.pdf', '.docx', '.doc', '.pptx', '.csv', '.xlsx' and '.md'** files.  
 - Supabase Buckets have a **50 MB free storage limit**, so large file uploads may need careful management.  
 - Requires internet connection for LLM queries and cloud services.  
 - Password reset option is not available.  
-- Change password functionality exists but there is no user profile page.  
+- Change password functionality exists and there is no user profile page.  
 
 ---
 

@@ -41,6 +41,8 @@ const BASE_URL = window.location.hostname === "localhost" || window.location.hos
   const MAX_HISTORY = 10; 
   const HISTORY_KEY = "chat_history";
 
+  
+
   // 🟢 Load history from localStorage
   const getChatHistory = () => {
     try {
@@ -256,18 +258,30 @@ window.handleLogin = async function() {
     }
 };
 
+
 // logout
 
 
-  window.logoutUser = async function() {
-    try {
-      const { error } = await sb.auth.signOut();
-      if (error) console.error("Logout error:", error);
-      window.location.href = "/login";
-    } catch (err) {
-      console.error("Unexpected error:", err);
-      window.location.href = "/login";
-    }
+ window.logoutUser = async function() {
+  try {
+    const { error } = await sb.auth.signOut();
+    if (error) console.error("Logout error:", error);
+
+    // Clear cookies
+    document.cookie = "access_token=; Max-Age=0; path=/";
+    document.cookie = "refresh_token=; Max-Age=0; path=/";
+
+    // Clear localStorage
+    localStorage.removeItem("access_token");
+    localStorage.removeItem("refresh_token");
+
+    // Redirect to login
+    window.location.href = "/login";
+  } catch (err) {
+    console.error("Unexpected error:", err);
+    window.location.href = "/login";
   }
+}
+
 
 });

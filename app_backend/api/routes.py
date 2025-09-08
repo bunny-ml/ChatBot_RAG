@@ -33,12 +33,16 @@ class Flask_app:
             
         @self.app.route('/chat_ai', methods=['GET'])
         def chat():
+            token = request.cookies.get("access_token")
+            # print(f"Received token: {token}")
+            if not token:
+                return jsonify({"error": "Not logged in"}), 401
             try:
                 return render_template('index.html',
                                                     SUPABASE_URL = os.getenv('SUPABASE_URL'),
                                                     ANON_KEY = os.getenv('ANON_KEY'))
             except:
-                return jsonify({'error'"something whent wrong"}), 500
+                return jsonify({'error'"something went wrong"}), 500
 
         # set session
         @self.app.route('/set-session', methods=['POST'])

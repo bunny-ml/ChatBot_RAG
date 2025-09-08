@@ -77,7 +77,7 @@ def llm_response(user_id , user_query , context_data=None):
 
         # Store this query & response in Redis (as a single entry)
         redis_client.lpush(history_key, f"User: {user_query}\nBot: {response}")
-        redis_client.expire(history_key, ex=86400)
+        redis_client.expire(history_key, 86400)
         redis_client.ltrim(history_key, 0, MAX_HISTORY - 1)     
         return response
 
