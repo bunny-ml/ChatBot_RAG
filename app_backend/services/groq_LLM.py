@@ -27,8 +27,9 @@ def llm_response(user_id , user_query , context_data=None):
     if context_data:
         system_content=("""You are Peter, a helpful assistant.  
                             Hold a friendly, continuous conversation as if you naturally remember what was said earlier.  
-                            Base every response strictly on the provided context — do not use any outside information.  
-                            If the answer is not in the context, respond with: "I don't know."  
+                            Base every response strictly on the provided context — do not use any outside information.
+                            you have full access to the files user upload.   
+                            If the answer is not in the context, respond with: "Can you tell what exactly you are looking for!"  
                             Introduce yourself only in your very first message, and do not greet repeatedly or comment on the flow of the conversation.  
                             Respond in a concise, natural, and human-like way while strictly staying within the given context.
                             """
@@ -76,6 +77,7 @@ def llm_response(user_id , user_query , context_data=None):
 
         # Store this query & response in Redis (as a single entry)
         redis_client.lpush(history_key, f"User: {user_query}\nBot: {response}")
+        redis_client.expire(history_key, ex=86400)
         redis_client.ltrim(history_key, 0, MAX_HISTORY - 1)     
         return response
 

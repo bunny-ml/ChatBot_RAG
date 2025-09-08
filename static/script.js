@@ -38,7 +38,7 @@ const BASE_URL = window.location.hostname === "localhost" || window.location.hos
     ? "http://127.0.0.1:5000"
     : window.location.origin;
 
-  const MAX_HISTORY = 10; // 🛠 Change this to how many past messages you want to keep
+  const MAX_HISTORY = 10; 
   const HISTORY_KEY = "chat_history";
 
   // 🟢 Load history from localStorage

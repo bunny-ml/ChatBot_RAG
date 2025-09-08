@@ -5,10 +5,15 @@ import threading
 import io
 from PyPDF2 import PdfReader
 import docx
+# import pytesseract
+# from PIL import Image
+import csv
+import openpyxl
+import pptx
 import requests
 import uuid
 import re
-import jwt  # Ensure PyJWT is installed: pip install pyjwt
+import jwt  
 
 
 class file_handler_service:
@@ -16,11 +21,14 @@ class file_handler_service:
         self.supabase_client = SupabaseClient()
         self.supabase = self.supabase_client.client
         self.BUCKET_NAME = "user-upload"
-        self.ALLOWED_EXTENSIONS = {'.txt', '.pdf', '.docx'}
+        self.ALLOWED_EXTENSIONS = {'.txt', '.pdf', '.docx', '.doc', '.pptx', '.csv', '.xlsx', '.md'    
+                                   }
+        
+        #, '.png', '.jpg', '.jpeg' not used for now 
         self.supabase_url = os.getenv('SUPABASE_URL')
         self.anon_key = os.getenv('SUPABASE_ANON_KEY')
         self.jina_api_key = os.getenv('JINA_API_KEY')
-        self.jwt_secret = os.getenv('JWT_SECRET')  # FIX 1
+        self.jwt_secret = os.getenv('JWT_SECRET')  
 
     @staticmethod
     def chunk_text(text, max_tokens=500, overlap=50):
@@ -105,12 +113,41 @@ class file_handler_service:
         try:
             if ext.lower() == ".txt":
                 text = data.decode("utf-8", errors="ignore")
+            
             elif ext.lower() == ".pdf":
                 reader = PdfReader(io.BytesIO(data))
                 text = "\n".join(page.extract_text() or "" for page in reader.pages)
-            elif ext.lower() == ".docx":
+            
+            elif ext.lower() in [".docx", '.doc']:
                 doc = docx.Document(io.BytesIO(data))
                 text = "\n".join(para.text for para in doc.paragraphs)
+            
+            elif ext.lower() == ".pptx":
+                prs = pptx.Presentation(io.BytesIO(data))
+                for slide in prs.slides:
+                    for shape in slide.shapes:
+                        if hasattr(shape, 'text'):
+                            text += shape.text + '\n'
+            
+            elif ext.lower() == '.csv':
+                decoded = data.decode('utf-8' , errors ='ignore').splitlines()
+                reader = csv.reader(decoded)
+                text = '\n'.join([", ".join(row) for row in reader])
+            
+            elif ext.lower() == '.xlsx':
+                wb = openpyxl.load_workbook(io.BytesIO(data))
+                for sheet in wb.sheetnames:
+                    ws = wb[sheet]
+                    for row in ws.iter_rows(values_only=True):
+                        text += " ".join([str(cell) for cell in row if cell])
+            
+            elif ext.lower() == '.md':
+                text = data.decode('utf-8', errors='ignore')
+
+            # elif ext.lower() in ['.png', '.jpg', '.jpeg']:
+            #     image = Image.open(io.BytesIO(data))
+            #     text = pytesseract.image_to_string(image)
+
             else:
                 print("Unsupported file type")
                 self._delete_direct(file_path)
